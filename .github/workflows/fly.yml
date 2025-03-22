@@ -11,6 +11,24 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      - name: Check if app exists
+        id: check_app
+        run: |
+          if flyctl apps list | grep -q "telegram-bot-fragrant-water-9882"; then
+            echo "App exists"
+            echo "app_exists=true" >> $GITHUB_ENV
+          else
+            echo "App does not exist"
+            echo "app_exists=false" >> $GITHUB_ENV
+          fi
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Create app if it doesn't exist
+        if: env.app_exists == 'false'
+        run: flyctl apps create telegram-bot-fragrant-water-9882 --org personal
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Deploy app
+        run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
