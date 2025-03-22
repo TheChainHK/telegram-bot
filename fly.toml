@@ -14,7 +14,7 @@ primary_region = 'nrt'
 
 [http_service]
   internal_port = 8000
-  protocal = 'tcp'
+  protocol = 'tcp'
 
   [services.concurrency]
     hard_limit = 25
